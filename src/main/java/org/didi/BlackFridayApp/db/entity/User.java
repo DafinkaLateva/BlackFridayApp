@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 @Entity
 @Table(name = "users")
@@ -81,6 +82,11 @@ public class User {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public void updateFields(@Valid User userForm) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

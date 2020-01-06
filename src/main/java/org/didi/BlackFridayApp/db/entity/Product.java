@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.didi.BlackFridayApp.exceptions.MoneyException;
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -53,7 +55,7 @@ public class Product {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(Double price) throws MoneyException {
 		this.price = price;
 	}
 
@@ -61,7 +63,7 @@ public class Product {
 		return minPrice;
 	}
 
-	public void setMinPrice(Double minPrice) {
+	public void setMinPrice(Double minPrice) throws MoneyException {
 		this.minPrice = minPrice;
 	}
 

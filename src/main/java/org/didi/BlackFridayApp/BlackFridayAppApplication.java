@@ -8,6 +8,7 @@ public class BlackFridayAppApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BlackFridayAppApplication.class, args);
+
 	}
 
 }
