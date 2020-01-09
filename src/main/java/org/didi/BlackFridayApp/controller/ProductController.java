@@ -43,5 +43,19 @@ public class ProductController {
 	public Collection<Product> getAll() {
 
 		return products.list();
+
+	}
+
+	@GetMapping("/product/listBF")
+	public Collection<Product> getBF() {
+
+		return products.listBF();
+	}
+
+	@GetMapping("/user/getProductById/{id}")
+	public Product getProductByid(@PathVariable Integer id) {
+
+		Product product = products.getProductById(id);
+		return product;
 	}
 }

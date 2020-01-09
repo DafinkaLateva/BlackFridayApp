@@ -27,6 +27,8 @@ public class User {
 	private String address;
 	@Column(name = "role")
 	private String role;
+	@Column(name = "orders")
+	private String order;
 
 	public Integer getId() {
 		return id;
@@ -82,6 +84,14 @@ public class User {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public void updateFields(@Valid User userForm) {

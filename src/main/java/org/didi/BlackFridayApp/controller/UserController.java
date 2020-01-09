@@ -1,6 +1,8 @@
 package org.didi.BlackFridayApp.controller;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,7 +45,15 @@ public class UserController {
 	public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
 
 		users.deleteById(id);
+
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/user/getUserById/{id}")
+	public User getUserById(@PathVariable Integer id) {
+
+		User user = users.getUserById(id);
+		return user;
 	}
 
 	@PostMapping("/user/login")
@@ -92,18 +104,11 @@ public class UserController {
 		return true;
 	}
 
-	/*
-	 * @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.GET) public
-	 * String editUser(@PathVariable Integer id, Model model) {
-	 * model.addAttribute("userForm", users.getById(id)); return
-	 * "/panels/user/editUser"; }
-	 *
-	 * @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.POST)
-	 * public String editUser(@Valid @ModelAttribute("userForm") User userForm,
-	 * BindingResult result,
-	 *
-	 * @PathVariable Integer id, Model model) { if (result.hasErrors()) { User user
-	 * = users.getById(id); user.updateFields(userForm); } users.update(userForm); }
-	 */
+//TODO:
+	@PutMapping("/user/update/{id}")
+	public List<User> update(@PathVariable Iterable<Integer> id, @RequestBody Map<String, String> body) {
 
+		return users.update(id, body);
+
+	}
 }
