@@ -29,9 +29,9 @@ public class OrderService {
 		return orderFinder.saveAndFlush(order);
 	}
 
-	public String buyProduct(Integer userId, Integer productId, Integer amount, String date) {
+	public String buyProduct(Integer clientId, Integer productId, Integer amount, String date) {
 		Order order = new Order();
-		User user = userService.getUserById(userId);
+		User user = userService.getUserById(clientId);
 		Product product = productService.getProductById(productId);
 		double orderPrice = amount * product.getPrice();
 		double discountedOrderPrice = amount * (product.getPrice() - product.getPrice() * product.getDiscount());
@@ -39,7 +39,7 @@ public class OrderService {
 			return "There is not enough of this product";
 		}
 
-		order.setIdClient(userId);
+		order.setIdClient(clientId);
 		order.setIdProd(productId);
 		order.setAmount(amount);
 		order.setPrice(orderPrice);

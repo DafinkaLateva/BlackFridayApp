@@ -16,11 +16,11 @@ public class OrderController {
 	@Autowired
 	private OrderService orders;
 
-	@PostMapping("/order/buy/{clientId},{productId},{amount}, {date}")
+	@PostMapping("/order/buy/{clientId}, {productId}, {amount}, {String}")
 	public String buyProduct(@PathVariable Integer clientId, @PathVariable Integer productId,
 			@PathVariable Integer amount, @PathVariable String date) {
-
-		return orders.buyProduct(clientId, productId, amount, date);
+		String order = orders.buyProduct(clientId, productId, amount, date);
+		return order;
 
 	}
 
