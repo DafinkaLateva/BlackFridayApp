@@ -2,9 +2,13 @@ package org.didi.BlackFridayApp.controller;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpSession;
+
 import org.didi.BlackFridayApp.db.entity.Order;
+import org.didi.BlackFridayApp.model.BuyProductModel;
 import org.didi.BlackFridayApp.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,26 +18,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
 	@Autowired
-	private OrderService orders;
+	private OrderService orderService;
 
-	@PostMapping("/order/buy/{clientId}, {productId}, {amount}, {String}")
-	public String buyProduct(@PathVariable Integer clientId, @PathVariable Integer productId,
-			@PathVariable Integer amount, @PathVariable String date) {
-		String order = orders.buyProduct(clientId, productId, amount, date);
-		return order;
+	@PostMapping("/order/buy")
+	public ResponseEntity<?> buyProduct(BuyProductModel model, HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("client")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+
+		String order = orderService.buyProduct((Integer) session.getAttribute("userId"), model.getProductId(),
+				model.getAmount(), model.getDate());
+
+		return ResponseEntity.ok(order);
 
 	}
 
 	@GetMapping("order/info/")
 	public Collection<Order> getAll() {
 
-		return orders.list();
+		return orderService.list();
 	}
 
 	@GetMapping("order/getOrderByClientId/{idClient}")
 	public Order getOrderByClientId(@PathVariable Integer idClient) {
 
-		Order order = orders.getOrderByClientId(idClient);
+		Order order = orderService.getOrderByClientId(idClient);
 		return order;
 	}
 }

@@ -34,7 +34,8 @@ public class OrderService {
 		User user = userService.getUserById(clientId);
 		Product product = productService.getProductById(productId);
 		double orderPrice = amount * product.getPrice();
-		double discountedOrderPrice = amount * (product.getPrice() - product.getPrice() * product.getDiscount());
+		double discountedOrderPrice = amount
+				* (product.getPrice() - (product.getPrice() * product.getDiscount() / 100));
 		if (amount > product.getAmount() || product.getAmount() == 0) {
 			return "There is not enough of this product";
 		}

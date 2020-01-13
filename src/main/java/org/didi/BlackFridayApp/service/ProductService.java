@@ -29,7 +29,6 @@ public class ProductService {
 		return productFinder.findAll();
 	}
 
-//TODO:
 	public Collection<Product> listBF() {
 		List<Product> products = productFinder.findAll();
 		for (int i = 0; i < products.size(); i++) {
@@ -46,7 +45,6 @@ public class ProductService {
 		product.setAmount(amount);
 		product.setPrice(price);
 		product.setMinPrice(minPrice);
-
 		product.setDiscount(discount);
 
 		return productFinder.findOne(Example.of(product)).orElseGet(() -> null);

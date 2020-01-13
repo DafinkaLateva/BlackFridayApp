@@ -2,6 +2,8 @@ package org.didi.BlackFridayApp.controller;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpSession;
+
 import org.didi.BlackFridayApp.db.entity.Product;
 import org.didi.BlackFridayApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,47 +17,64 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProductController {
 	@Autowired
-	private ProductService products;
+	private ProductService productService;
+	private boolean isBlackFriday;
 
 	@PostMapping("/product/add")
-	public Product addProduct(Product product) {
-
-		return products.add(product);
-
+	public ResponseEntity<?> addProduct(Product product, @PathVariable Integer id, HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+		productService.add(product);
+		return ResponseEntity.ok(product);
 	}
 
 	@DeleteMapping("/product/remove/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable Integer id, HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
 
-	public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-		products.delete(id);
+		productService.delete(id);
 		return ResponseEntity.noContent().build();
-
-	}
-
-	@PostMapping("/product/edit")
-
-	public Product edit(Product product) {
-		return product;
 
 	}
 
 	@GetMapping("/product/list")
 	public Collection<Product> getAll() {
 
-		return products.list();
+		return productService.list();
 
 	}
 
 	@GetMapping("/product/listBF")
 	public Collection<Product> getBF() {
 
-		return products.listBF();
+		return productService.listBF();
 	}
 
-	@GetMapping("/user/getProductById/{id}")
+	@GetMapping("/product/getProductById/{id}")
 	public Product getProductByid(@PathVariable Integer id) {
 
-		Product product = products.getProductById(id);
+		Product product = productService.getProductById(id);
 		return product;
 	}
+
+	@GetMapping("/product/bf")
+	public ResponseEntity<?> launchBf(HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+
+		this.isBlackFriday = !this.isBlackFriday;
+
+		return ResponseEntity.ok(this.isBlackFriday);
+	}
+
 }
