@@ -7,6 +7,8 @@ import org.didi.BlackFridayApp.db.entity.Product;
 import org.didi.BlackFridayApp.db.entity.User;
 import org.didi.BlackFridayApp.db.finder.OrderFinder;
 import org.didi.BlackFridayApp.db.finder.ProductFinder;
+import org.didi.BlackFridayApp.exceptions.AmountException;
+import org.didi.BlackFridayApp.exceptions.MoneyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -47,8 +49,18 @@ public class OrderService {
 		order.setFinalPrice(discountedOrderPrice);
 		order.setDate(date);
 		Order newOrder = orderAdd(order);
-		product.setAmount(product.getAmount() - amount);
-		Product newProduct = productService.add(product);// TODO: change add to edit later
+		try {
+			product.setAmount(product.getAmount() - amount);
+		} catch (AmountException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			Product newProduct = productService.add(product);
+		} catch (MoneyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // TODO: change add to edit later
 
 		return "Your order has been successul.";
 	}
@@ -62,4 +74,11 @@ public class OrderService {
 		order.setIdClient(idClient);
 		return orderFinder.findOne(Example.of(order)).orElseGet(() -> null);
 	}
+
+	public void delete(Integer id) {
+
+		orderFinder.deleteById(id);
+
+	}
+
 }

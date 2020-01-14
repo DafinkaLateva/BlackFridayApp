@@ -9,8 +9,6 @@ public class BlackFridayAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BlackFridayAppApplication.class, args);
 
-		// this is a change
-		System.out.println("git test");
 	}
 
 }

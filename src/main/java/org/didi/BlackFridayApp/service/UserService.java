@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.didi.BlackFridayApp.db.entity.User;
 import org.didi.BlackFridayApp.db.finder.UserFinder;
+import org.didi.BlackFridayApp.model.EditUserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,18 @@ public class UserService {
 		User user = new User();
 		user.setId(id);
 		return userFinder.findOne(Example.of(user)).orElseGet(() -> null);
+	}
+
+	public User updateUser(Integer id, EditUserModel userModel) {
+		User updatedUser = getUserById(id);
+		updatedUser.setUsername(userModel.getUsername());
+		updatedUser.setPassword(userModel.getPassword());
+		updatedUser.setEmail(userModel.getEmail());
+		updatedUser.setPhoneNumber(userModel.getPhoneNumber());
+		updatedUser.setAddress(userModel.getAddress());
+		updatedUser.setRole(userModel.getRole());
+		updatedUser.updateFields(updatedUser);
+		return userFinder.save(updatedUser);
 	}
 
 }

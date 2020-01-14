@@ -3,8 +3,12 @@ package org.didi.BlackFridayApp.controller;
 import java.util.Collection;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.didi.BlackFridayApp.db.entity.Product;
+import org.didi.BlackFridayApp.exceptions.AccountException;
+import org.didi.BlackFridayApp.exceptions.MoneyException;
+import org.didi.BlackFridayApp.model.EditModel;
 import org.didi.BlackFridayApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,7 +27,7 @@ public class ProductController {
 	private boolean isBlackFriday;
 
 	@PostMapping("/product/add")
-	public ResponseEntity<?> addProduct(Product product, @PathVariable Integer id, HttpSession session) {
+	public ResponseEntity<?> addProduct(Product product, HttpSession session) throws MoneyException {
 		if (session.getAttribute("userId") == null) {
 			return ResponseEntity.status(401).body("unauth");
 		} else if (!session.getAttribute("userRole").equals("employee")) {
@@ -39,7 +45,12 @@ public class ProductController {
 			return ResponseEntity.status(403).body("forbidden");
 		}
 
-		productService.delete(id);
+		try {
+			productService.delete(id);
+		} catch (AccountException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ResponseEntity.noContent().build();
 
 	}
@@ -75,6 +86,19 @@ public class ProductController {
 		this.isBlackFriday = !this.isBlackFriday;
 
 		return ResponseEntity.ok(this.isBlackFriday);
+	}
+
+	@PutMapping("product/update/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable Integer id, HttpSession session,
+			@Valid @RequestBody EditModel productModel) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+
+		return ResponseEntity.ok(productService.updateProduct(id, productModel));
+
 	}
 
 }

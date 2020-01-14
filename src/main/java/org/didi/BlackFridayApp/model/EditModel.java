@@ -1,5 +1,7 @@
 package org.didi.BlackFridayApp.model;
 
+import org.didi.BlackFridayApp.exceptions.MoneyException;
+
 public class EditModel {
 
 	private String name;
@@ -20,7 +22,7 @@ public class EditModel {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(Double price) throws MoneyException {
 		this.price = price;
 	}
 
@@ -28,7 +30,7 @@ public class EditModel {
 		return minPrice;
 	}
 
-	public void setMinPrice(double minPrice) {
+	public void setMinPrice(double minPrice) throws MoneyException {
 		this.minPrice = minPrice;
 	}
 

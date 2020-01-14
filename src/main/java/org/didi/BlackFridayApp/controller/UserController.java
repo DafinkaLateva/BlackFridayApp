@@ -1,11 +1,11 @@
 package org.didi.BlackFridayApp.controller;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.didi.BlackFridayApp.GenericResponse;
 import org.didi.BlackFridayApp.db.entity.User;
+import org.didi.BlackFridayApp.model.EditUserModel;
 import org.didi.BlackFridayApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,9 +24,13 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping("/user/list")
-	public Collection<User> list() {
-
-		return userService.list();
+	public ResponseEntity<?> list(HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+		return ResponseEntity.ok(userService.list());
 	}
 
 	@PostMapping("/user/register")
@@ -32,7 +38,7 @@ public class UserController {
 		User registeredUser = userService.signUp(user);
 
 		if (registeredUser == null) {
-			return ResponseEntity.status(400).body(new GenericResponse<>("Failde"));
+			return ResponseEntity.status(400).body(new GenericResponse<>("Failed"));
 		}
 
 		return ResponseEntity.ok(registeredUser);
@@ -79,6 +85,19 @@ public class UserController {
 		session.invalidate();
 
 		return true;
+	}
+
+	@PutMapping("user/update/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable Integer id, HttpSession session,
+			@Valid @RequestBody EditUserModel userModel) {
+		if (session.getAttribute("userId") == null) {
+			return ResponseEntity.status(401).body("unauth");
+		} else if (!session.getAttribute("userRole").equals("employee")) {
+			return ResponseEntity.status(403).body("forbidden");
+		}
+
+		return ResponseEntity.ok(userService.updateUser(id, userModel));
+
 	}
 
 }
